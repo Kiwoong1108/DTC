@@ -219,7 +219,7 @@ button:focus-visible{outline:3px solid var(--gold-l);outline-offset:2px}
     <a class="mi" id="tFeed" href="https://github.com/Kiwoong1108/DTC/issues/new" target="_blank" rel="noopener"><i class="dia"></i><span>피드백</span><i class="dia"></i><span class="rule"><i class="dia"></i></span></a>
     <button class="mi" id="tSet"><i class="dia"></i><span>설정</span><i class="dia"></i><span class="rule"><i class="dia"></i></span></button>
   </nav>
-  <div id="ver">v0.0.3</div>
+  <div id="ver">v0.0.4</div>
 </div>
 <div id="confirmOv" class="modal" hidden><div class="panel box"><h2 id="cfTitle">새로 시작할까요?</h2><p id="cfText" style="margin:0;font-size:18px;line-height:1.4">지금까지의 진행 상황(XP, 왕관, 강화, 클리어 기록)이 모두 사라져요.</p><button class="btn red" id="cfYes">새로 시작</button><button class="btn alt" id="cfNo">취소</button></div></div>
 <div id="setOv" class="modal" hidden><div class="panel box" style="width:min(360px,calc(100vw - 40px))"><h2>설정</h2>
@@ -570,38 +570,36 @@ function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save))}catch
 
 /* ================= upgrades ================= */
 const TREE=[
- // hubs: 성 (위) / 유닛 (아래)
- {id:'castle',p:'root',hub:1,x:0,y:-170,name:'성',icon:'tower',max:0},
- {id:'unit',p:'root',hub:1,x:0,y:170,name:'유닛',icon:'helm',max:0},
+ // 왕관 위: 성벽 보강 I / 아래: 징병소 I — each fans out into 4 branches
+ {id:'wall1',p:'root',x:0,y:-170,name:'성벽 보강 I',icon:'tower',max:3,base:6,inc:4,desc:'성벽을 덧쌓아 성의 최대 체력을 올립니다. 강화할 때마다 성이 한 단계 커집니다.',eff:l=>`성 체력 +${50*l}`},
+ {id:'pop1',p:'root',x:0,y:170,name:'징병소 I',icon:'helm',max:3,base:8,inc:5,desc:'최대 인구수가 늘어납니다.',eff:l=>`최대 인구 +${l}`},
  // 성 → 궁수 / 세금 / 나팔수 / 보강
- {id:'archer',p:'castle',br:0,step:1,name:'성벽 궁수',icon:'bow',max:1,crown:1,desc:'성에서 가까운 적에게 자동으로 화살을 쏩니다.',eff:l=>l?'해금됨':'잠김'},
+ {id:'archer',p:'wall1',br:0,step:1,name:'성벽 궁수',icon:'bow',max:1,crown:1,desc:'성에서 가까운 적에게 자동으로 화살을 쏩니다.',eff:l=>l?'해금됨':'잠김'},
  {id:'arrow1',p:'archer',br:0,step:2,name:'불화살',icon:'bow',max:5,base:10,inc:5,desc:'성벽 궁수의 화살 피해가 오릅니다.',eff:l=>`화살 피해 +${3*l}`},
- {id:'gold1',p:'castle',br:1,step:1,name:'세금 징수',icon:'coin',max:5,base:6,inc:4,desc:'전투 중 초당 골드 수입이 늘어납니다.',eff:l=>`수입 +${20*l}%`},
+ {id:'gold1',p:'wall1',br:1,step:1,name:'세금 징수',icon:'coin',max:5,base:6,inc:4,desc:'전투 중 초당 골드 수입이 늘어납니다.',eff:l=>`수입 +${20*l}%`},
  {id:'gold2',p:'gold1',br:1,step:2,name:'군자금',icon:'coin',max:3,base:12,inc:6,desc:'전투를 더 많은 골드로 시작합니다.',eff:l=>`시작 골드 +${15*l}`},
  {id:'loot',p:'gold2',br:1,step:3,name:'황금 약탈',icon:'coin',max:1,crown:1,desc:'적을 처치할 때 얻는 골드가 두 배가 됩니다.',eff:l=>l?'해금됨':'잠김'},
- {id:'cd1',p:'castle',br:2,step:1,name:'나팔수',icon:'glass',max:5,base:6,inc:4,desc:'소환 쿨타임이 줄어듭니다.',eff:l=>`쿨타임 -${8*l}%`},
+ {id:'cd1',p:'wall1',br:2,step:1,name:'나팔수',icon:'glass',max:5,base:6,inc:4,desc:'소환 쿨타임이 줄어듭니다.',eff:l=>`쿨타임 -${8*l}%`},
  {id:'cost1',p:'cd1',br:2,step:2,name:'보급 계약',icon:'coin',max:3,base:12,inc:6,desc:'기사 소환에 드는 골드가 줄어듭니다.',eff:l=>`소환 비용 -${2*l}`},
- {id:'wall1',p:'castle',br:3,step:1,name:'성벽 보강 I',icon:'tower',max:3,base:6,inc:4,desc:'성벽을 덧쌓아 성의 최대 체력을 올립니다. 강화할 때마다 성이 한 단계 커집니다.',eff:l=>`성 체력 +${50*l}`},
- {id:'wall2',p:'wall1',br:3,step:2,name:'성벽 보강 II',icon:'tower',max:3,base:14,inc:6,desc:'석재 성벽으로 교체합니다. 성 레벨도 함께 오릅니다.',eff:l=>`성 체력 +${80*l}`},
- {id:'wall3',p:'wall2',br:3,step:3,name:'성벽 보강 III',icon:'tower',max:3,base:25,inc:10,desc:'왕국 최고의 요새. 성 레벨 10에 도달합니다.',eff:l=>`성 체력 +${120*l}`},
- {id:'repair',p:'wall2',br:3,step:2,side:1,name:'성 수리공',icon:'hammer',max:3,base:12,inc:6,desc:'전투 중 성이 조금씩 회복됩니다.',eff:l=>`초당 +${l} 회복`},
+ {id:'wall2',p:'wall1',br:3,step:1,name:'성벽 보강 II',icon:'tower',max:3,base:14,inc:6,desc:'석재 성벽으로 교체합니다. 성 레벨도 함께 오릅니다.',eff:l=>`성 체력 +${80*l}`},
+ {id:'wall3',p:'wall2',br:3,step:2,name:'성벽 보강 III',icon:'tower',max:3,base:25,inc:10,desc:'왕국 최고의 요새. 성 레벨 10에 도달합니다.',eff:l=>`성 체력 +${120*l}`},
+ {id:'repair',p:'wall2',br:3,step:1,side:1,name:'성 수리공',icon:'hammer',max:3,base:12,inc:6,desc:'전투 중 성이 조금씩 회복됩니다.',eff:l=>`초당 +${l} 회복`},
  // 유닛 → 징병소 / 검 단련 / 군마 훈련 / 사슬 갑옷
- {id:'pop1',p:'unit',br:0,step:1,name:'징병소',icon:'helm',max:3,base:8,inc:5,desc:'최대 인구수가 늘어납니다.',eff:l=>`최대 인구 +${l}`},
- {id:'pop2',p:'pop1',br:0,step:2,name:'병영 확장',icon:'helm',max:3,base:16,inc:8,desc:'병영을 넓혀 더 많은 기사를 거느립니다.',eff:l=>`최대 인구 +${l}`},
- {id:'atk1',p:'unit',br:1,step:1,name:'검 단련',icon:'sword',max:5,base:6,inc:4,desc:'기사의 공격력이 오릅니다.',eff:l=>`공격력 +${2*l}`},
+ {id:'pop2',p:'pop1',br:0,step:1,name:'징병소 II',icon:'helm',max:3,base:16,inc:8,desc:'병영을 넓혀 더 많은 기사를 거느립니다.',eff:l=>`최대 인구 +${l}`},
+ {id:'atk1',p:'pop1',br:1,step:1,name:'검 단련',icon:'sword',max:5,base:6,inc:4,desc:'기사의 공격력이 오릅니다.',eff:l=>`공격력 +${2*l}`},
  {id:'atk2',p:'atk1',br:1,step:2,name:'명검',icon:'sword',max:5,base:14,inc:6,desc:'대장장이가 벼린 명검을 지급합니다.',eff:l=>`공격력 +${3*l}`},
  {id:'cleave',p:'atk2',br:1,step:3,name:'회전 베기',icon:'sword',max:1,crown:1,desc:'기사의 공격이 주변 적 모두에게 절반의 피해를 줍니다.',eff:l=>l?'해금됨':'잠김'},
- {id:'spd1',p:'unit',br:2,step:1,name:'군마 훈련',icon:'boot',max:3,base:8,inc:5,desc:'기사의 이동속도가 빨라집니다.',eff:l=>`이동속도 +${10*l}%`},
- {id:'hp1',p:'unit',br:3,step:1,name:'사슬 갑옷',icon:'helm',max:5,base:6,inc:4,desc:'기사의 체력이 오릅니다.',eff:l=>`체력 +${8*l}`},
+ {id:'spd1',p:'pop1',br:2,step:1,name:'군마 훈련',icon:'boot',max:3,base:8,inc:5,desc:'기사의 이동속도가 빨라집니다.',eff:l=>`이동속도 +${10*l}%`},
+ {id:'hp1',p:'pop1',br:3,step:1,name:'사슬 갑옷',icon:'helm',max:5,base:6,inc:4,desc:'기사의 체력이 오릅니다.',eff:l=>`체력 +${8*l}`},
  {id:'hp2',p:'hp1',br:3,step:2,name:'판금 갑옷',icon:'helm',max:5,base:14,inc:6,desc:'두꺼운 판금으로 기사를 감쌉니다.',eff:l=>`체력 +${12*l}`},
  {id:'bless',p:'hp2',br:3,step:3,name:'수호의 축복',icon:'heart',max:1,crown:1,desc:'기사가 초당 체력 2를 회복합니다.',eff:l=>l?'해금됨':'잠김'},
 ];
 // lay branches out as a fan from each hub: 4 rays, left → right
 (()=>{const dirs=[[-1,-.3],[-.5,-1],[.5,-1],[1,-.3]].map(([x,y])=>{const m=Math.hypot(x,y);return[x/m,y/m]});
-  const hubOf=n=>{let c=n;while(c.p!=='root'&&!c.hub)c=TREE.find(t=>t.id===c.p);return c};
-  TREE.forEach(n=>{if(n.hub)return;const h=hubOf(n),flip=h.id==='unit'?-1:1;const[dx,dy]=dirs[n.br];const ddy=dy*flip,st=165;
+  const hubOf=n=>{let c=n;while(c.p!=='root')c=TREE.find(t=>t.id===c.p);return c};
+  TREE.forEach(n=>{if(n.p==='root')return;const h=hubOf(n),flip=h.id==='pop1'?-1:1;const[dx,dy]=dirs[n.br];const ddy=dy*flip,st=165;
     n.x=h.x+dx*st*n.step;n.y=h.y+ddy*st*n.step;
-    if(n.side){n.x+=ddy*130*flip;n.y+=-dx*130*flip}});})();
+    if(n.side){n.x-=ddy*130*flip;n.y+=dx*130*flip}});})();
 const NODE=Object.fromEntries(TREE.map(n=>[n.id,n]));
 const lv=id=>save.up[id]||0;
 const isDone=id=>id==='root'||NODE[id].hub||lv(id)>=NODE[id].max;
@@ -616,17 +614,17 @@ function stats(){
 
 /* ================= stages ================= */
 const STAGES=[
- // grp: max goblins per spawn group, arch: share of goblin archers, boss: goblin king at the end of the timer
- {name:'성 앞 들판',dur:60,gates:4,mult:1,i0:2.2,i1:1.2,grp:2},
- {name:'바위 언덕',dur:65,gates:4,mult:1.05,i0:2.0,i1:1.05,grp:2},
- {name:'굽은 숲길',dur:70,gates:4,mult:1.1,i0:1.9,i1:.95,grp:3},
- {name:'숲속 갈림길',dur:75,gates:6,mult:1.15,i0:1.8,i1:.9,grp:3},
- {name:'고블린 야영지',dur:75,gates:6,mult:1.2,i0:1.7,i1:.85,grp:3,arch:.25,archAt:.5},
- {name:'다리 건너',dur:80,gates:6,mult:1.3,i0:1.6,i1:.8,grp:3,arch:.25},
- {name:'고대 유적',dur:80,gates:6,mult:1.4,i0:1.5,i1:.75,grp:4,arch:.3},
- {name:'호숫가 숲',dur:85,gates:8,mult:1.55,i0:1.45,i1:.7,grp:4,arch:.3},
- {name:'돌기둥 언덕',dur:85,gates:8,mult:1.7,i0:1.4,i1:.65,grp:4,arch:.35},
- {name:'고블린 광산',dur:90,gates:8,mult:1.9,i0:1.4,i1:.65,grp:4,arch:.35,boss:true},
+ // grp: max goblins per spawn group, arch: share of goblin archers, archAt: archers only after this share of the timer, boss: goblin king at the end
+ {name:'성 앞 들판',dur:60,gates:4,mult:1,i0:3.2,i1:2.0,grp:1},
+ {name:'바위 언덕',dur:65,gates:4,mult:1.05,i0:2.8,i1:1.7,grp:2},
+ {name:'굽은 숲길',dur:70,gates:4,mult:1.1,i0:2.7,i1:1.6,grp:2},
+ {name:'숲속 갈림길',dur:75,gates:6,mult:1.15,i0:2.5,i1:1.45,grp:2},
+ {name:'고블린 야영지',dur:75,gates:6,mult:1.2,i0:2.5,i1:1.45,grp:2,arch:.25,archAt:.5},
+ {name:'다리 건너',dur:80,gates:6,mult:1.3,i0:2.3,i1:1.3,grp:3,arch:.25},
+ {name:'고대 유적',dur:80,gates:6,mult:1.4,i0:2.2,i1:1.2,grp:3,arch:.3},
+ {name:'호숫가 숲',dur:85,gates:8,mult:1.55,i0:2.1,i1:1.15,grp:3,arch:.3},
+ {name:'돌기둥 언덕',dur:85,gates:8,mult:1.7,i0:2.0,i1:1.1,grp:4,arch:.35},
+ {name:'고블린 광산',dur:90,gates:8,mult:1.9,i0:2.0,i1:1.1,grp:4,arch:.35,boss:true},
 ];
 
 /* ================= common ui ================= */
@@ -859,6 +857,10 @@ const Battle=(()=>{
   const cv=$('bCv'),ctx=cv.getContext('2d');
   const MW=1415,MH=1111,CX=690,CY=585,RX=640,RY=495;
   const GATE={x:690,y:650};
+  // grey gravel ring on the battle map: knights never leave it
+  const RING={x:704,y:533,rx:440,ry:338};
+  const ringD=(x,y)=>Math.hypot((x-RING.x)/RING.rx,(y-RING.y)/RING.ry);
+  function clampRing(p,m=1){const d=ringD(p.x,p.y);if(d>m){p.x=RING.x+(p.x-RING.x)*m/d;p.y=RING.y+(p.y-RING.y)*m/d}return p}
   let W=0,H=0,dpr=1,vs=1,ox=0,oy=0;
   let B=null,raf=0,last=0;
   function resize(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;
@@ -873,8 +875,10 @@ const Battle=(()=>{
     $('sumCostN').textContent=S.cost;drawFace();
     $('timerMark').hidden=!st.archAt;if(st.archAt)$('timerMark').style.left=(st.archAt*100)+'%';
     $('cine').classList.remove('on');$('battleScr').classList.remove('cinema');$('tut').hidden=true;speedLabel();
-    if(stageNo===1&&save.tut!==false){B.tut=true;setTimeout(()=>{if(B&&B.no===1&&B.tut)Tut.begin()},350)}
-    else banner(`1-${stageNo} ${st.name}`,1600);
+    // castle grew since the last battle? show the old castle first, then the upgrade
+    const shown=save.castleShown??S.castleLv;if(S.castleLv>shown){B.castleShow=shown;B.upg={t:-.5,from:shown,to:S.castleLv}}
+    if(stageNo===1&&save.tut!==false){B.tut=true;if(!B.upg)setTimeout(()=>{if(B&&B.no===1&&B.tut&&!B.upg)Tut.begin()},350)}
+    else if(!B.upg)banner(`1-${stageNo} ${st.name}`,1600);
     cancelAnimationFrame(raf);last=0;raf=requestAnimationFrame(loop);
   }
   // ---------- entities
@@ -911,7 +915,7 @@ const Battle=(()=>{
   cv.addEventListener('pointerdown',e=>{if(!B||B.over||B.paused||B.cine||B.tut)return;
     const wx=(e.clientX-ox)/vs,wy=(e.clientY-oy)/vs;
     if(((wx-CX)/120)**2+((wy-CY+10)/95)**2<1){B.rally=null;toast('자동 전투: 가장 가까운 적을 공격',1000)}
-    else{B.rally={x:Math.max(80,Math.min(MW-80,wx)),y:Math.max(80,Math.min(MH-60,wy)),t:0}}});
+    else{B.rally=clampRing({x:wx,y:wy,t:0},.95)}});
   // ---------- fx
   function puff(x,y,c,n=8){for(let i=0;i<n;i++){const a=Math.random()*6.28,s=40+Math.random()*90;B.fx.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,t:.5+Math.random()*.3,c,sz:4+Math.random()*4})}}
   function dmgText(x,y,v,c){B.texts.push({x:x+(Math.random()-.5)*10,y,txt:String(Math.round(v)),t:.8,c})}
@@ -922,7 +926,8 @@ const Battle=(()=>{
   // goblin archer: walks the castle line; stops to shoot a knight in its lane or the castle once in range
   function archerAI(e,knights,dt){
     let foe=null,bf=1e9;
-    knights.forEach(k=>{if(k.hp<=0)return;const rx=k.x-e.x,ry=k.y-e.y,fw=rx*e.ux+ry*e.uy,pp=Math.abs(rx*e.uy-ry*e.ux);
+    // archers only start shooting knights once they're inside the ring (knights can't leave it)
+    if(ringD(e.x,e.y)<=1)knights.forEach(k=>{if(k.hp<=0)return;const rx=k.x-e.x,ry=k.y-e.y,fw=rx*e.ux+ry*e.uy,pp=Math.abs(rx*e.uy-ry*e.ux);
       if(fw>-20&&fw<e.range&&pp<70&&fw<bf){bf=fw;foe=k}});
     const nearCastle=((e.x-CX)/(115+e.range*.7))**2+((e.y-CY)/(85+e.range*.5))**2<1;
     if(foe||nearCastle||e.shotT!=null){
@@ -958,9 +963,14 @@ const Battle=(()=>{
     knights.forEach((k,i)=>{
       k.at-=dt;k.flash-=dt;k.lunge=Math.max(0,k.lunge-dt);
       if(S.bless)k.hp=Math.min(k.max,k.hp+2*dt);
-      let tgt=null,best=1e9;
-      const ref=B.rally||k, rad=B.rally?170:1e9;
-      enemies.forEach(e=>{const dr=Math.hypot(e.x-ref.x,e.y-ref.y);if(dr>rad)return;const d=Math.hypot(e.x-k.x,e.y-k.y);if(d<best){best=d;tgt=e}});
+      // keep fighting the current foe and its group until they're all down; then go for the enemy closest to the castle (inside the ring first)
+      const rad=B.rally?170:1e9,inR=e=>!B.rally||Math.hypot(e.x-B.rally.x,e.y-B.rally.y)<=rad;
+      let tgt=k.tgt&&k.tgt.hp>0&&ringD(k.tgt.x,k.tgt.y)<=1.08&&inR(k.tgt)?k.tgt:null;
+      // still mid-fight with a group? finish the nearby ones first
+      if(!tgt){let bd=110;enemies.forEach(e=>{if(!inR(e)||ringD(e.x,e.y)>1.08)return;const d=Math.hypot(e.x-k.x,e.y-k.y);if(d<bd){bd=d;tgt=e}})}
+      if(!tgt){let best=1e9,pool=enemies.filter(e=>inR(e)&&ringD(e.x,e.y)<=1.08);if(!pool.length)pool=enemies.filter(inR);
+        pool.forEach(e=>{const d=Math.hypot(e.x-CX,e.y-CY);if(d<best){best=d;tgt=e}})}
+      k.tgt=tgt;
       let mx=0,my=0;
       if(tgt){const dx=tgt.x-k.x,dy=tgt.y-k.y,d=Math.hypot(dx,dy);k.face=dx>=0?1:-1;
         if(d>k.range){mx=dx/d;my=dy/d}
@@ -972,7 +982,7 @@ const Battle=(()=>{
       // separation
       knights.forEach(o=>{if(o===k)return;const dx=k.x-o.x,dy=k.y-o.y,d=Math.hypot(dx,dy);if(d<22&&d>0){mx+=dx/d*.8;my+=dy/d*.8}});
       const m=Math.hypot(mx,my);if(m>0){const sp=k.spd*dt*Math.min(1,m);k.x+=mx/m*sp;k.y+=my/m*sp;k.walk+=dt*10}
-      k.x=Math.max(40,Math.min(MW-40,k.x));k.y=Math.max(50,Math.min(MH-30,k.y));
+      clampRing(k);
     });
     // enemies: walk the straight line to the castle; fight only knights sitting on that line ahead of them
     enemies.forEach(e=>{
@@ -1056,12 +1066,15 @@ const Battle=(()=>{
     if(B.rally){const r=B.rally;ctx.strokeStyle='rgba(108,157,255,.7)';ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.beginPath();ctx.ellipse(r.x,r.y,170,110,0,0,7);ctx.stroke();ctx.setLineDash([]);
       const s=4;ctx.drawImage(IMG.flag,r.x-2,r.y-8*s+Math.round(Math.sin(r.t*4)),8*s,8*s)}
     // castle + units sorted by y
-    const ci=castleImgs[B.S.castleLv-1];
+    const ci=castleImgs[(B.castleShow||B.S.castleLv)-1];
     const items=B.units.slice();items.push({castle:true,y:CY+60});items.sort((a,b)=>a.y-b.y);
     items.forEach(u=>{if(u.castle){if(ci.complete){ctx.imageSmoothingEnabled=false;const w=ci.naturalWidth*2.2,h=ci.naturalHeight*2.2;
-        ctx.drawImage(ci,CX-w/2,CY+65-h,w,h);
+        const pop=B.upg&&B.upg.t>1&&B.upg.t<1.45?1+.12*Math.sin((B.upg.t-1)/.45*Math.PI):1;ctx.drawImage(ci,CX-w*pop/2,CY+65-h*pop,w*pop,h*pop);
       }}else{ctx.globalAlpha=u.fade??1;drawUnit(u);ctx.globalAlpha=1}});
     if(B.cine&&B.cine.u.hp>0){const u=B.cine.u,r=(u.type==='K'?70:44)+Math.sin(B.cine.t*6)*5;ctx.strokeStyle=`rgba(255,224,138,${Math.min(1,B.cine.t*2)*.9})`;ctx.lineWidth=4;ctx.setLineDash([10,8]);ctx.beginPath();ctx.ellipse(u.x,u.y-(u.type==='K'?55:28),r,r*.9,0,0,7);ctx.stroke();ctx.setLineDash([])}
+    if(B.upg){const u=B.upg,t=u.t;
+      if(t<1){const a=.15+.35*Math.abs(Math.sin(t*14))*t;ctx.fillStyle=`rgba(255,240,190,${a})`;ctx.beginPath();ctx.ellipse(CX,CY-30,150,125,0,0,7);ctx.fill()}
+      else if(t<1.6){const a=Math.max(0,1-(t-1)/.6);ctx.fillStyle=`rgba(255,255,255,${a*.85})`;ctx.beginPath();ctx.ellipse(CX,CY-30,190+(t-1)*120,160+(t-1)*100,0,0,7);ctx.fill()}}
     if(B.castleFlash>0){ctx.fillStyle='rgba(255,60,40,.25)';ctx.beginPath();ctx.ellipse(CX,CY-20,130,110,0,0,7);ctx.fill()}
     // arrows
     B.earrows.forEach(a=>{const im=ART.arch_arrow;if(!im||!im.naturalWidth)return;ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.ang);ctx.imageSmoothingEnabled=true;ctx.drawImage(im,-24,-3,48,5.5);ctx.restore()});
@@ -1089,9 +1102,12 @@ const Battle=(()=>{
   function cine(u,name,tag){if(save.cine===false){u.fade=1;banner(name+' 등장!',1500);return}B.cine={t:0,dur:2.8,u};$('cineCap').innerHTML=(tag?`<small>${tag}</small>`:'<small>NEW</small>')+name;$('cine').classList.add('on');$('battleScr').classList.add('cinema')}
   function loop(now){
     const raw=Math.min(.05,(now-(last||now))/1000);last=now;
+    if(B.upg&&!B.paused){const u=B.upg,pt=u.t;u.t+=raw;
+      if(pt<1&&u.t>=1){B.castleShow=u.to;B.shake=.3;for(let i=0;i<4;i++)puff(CX+(Math.random()-.5)*220,CY-40+(Math.random()-.5)*120,i%2?'#fff4c2':'#c9a96a',14);banner(`성 Lv.${u.from} → Lv.${u.to}`,1600)}
+      if(u.t>=2.4){B.upg=null;B.castleShow=0;save.castleShown=B.S.castleLv;persist();if(B.no===1&&B.tut)Tut.begin();else banner(`1-${B.no} ${B.st.name}`,1400)}}
     if(B.cine&&!B.paused){B.cine.t+=raw;if(B.cine.t>=B.cine.dur){B.cine=null;$('cine').classList.remove('on');$('battleScr').classList.remove('cinema')}}
     B.units.forEach(u=>{if(u.fade!=null&&u.fade<1&&!B.paused)u.fade=Math.min(1,u.fade+raw/1.3)});
-    if(!B.paused&&!B.over&&!B.tut){let tot=raw*(save.speed||1)*2*B.slow*(B.cine?.12:1);while(tot>1e-6&&!B.over){const st=Math.min(.05,tot);update(st);tot-=st}}
+    if(!B.paused&&!B.over&&!B.tut&&!B.upg){let tot=raw*(save.speed||1)*2*B.slow*(B.cine?.12:1);while(tot>1e-6&&!B.over){const st=Math.min(.05,tot);update(st);tot-=st}}
     if(B.over&&B.slow<1)update(raw*.5);
     draw();hud();
     if(current==='battle')raf=requestAnimationFrame(loop);
@@ -1101,15 +1117,15 @@ const Battle=(()=>{
   function finish(win,quit){
     if(!B||B.over)return;B.over=true;
     const xp=B.kills;save.xp+=xp;
-    if(win){save.crowns+=1;save.cleared[B.no]=true;save.unlocked=Math.max(save.unlocked,Math.min(10,B.no+1));save.stage=Math.min(10,B.no+1)}else save.stage=B.no;
+    if(win){if(B.st.boss)save.crowns+=1;save.cleared[B.no]=true;save.unlocked=Math.max(save.unlocked,Math.min(10,B.no+1));save.stage=Math.min(10,B.no+1)}else save.stage=B.no;
     persist();
     $('rTitle').textContent=win?'스테이지 클리어!':quit?'후퇴했습니다':'성이 함락되었습니다';
-    $('rKill').textContent=B.kills;$('rXp').textContent='+'+xp;$('rCrownRow').hidden=!win;
+    $('rKill').textContent=B.kills;$('rXp').textContent='+'+xp;$('rCrownRow').hidden=!(win&&B.st.boss);
     setTimeout(()=>{$('resOv').hidden=false;$('rGo').focus()},win?200:500);
   }
   $('rGo').onclick=()=>{$('resOv').hidden=true;show('upgrade')};
   addEventListener('resize',()=>{if(current==='battle')resize()});
-  // ---------- stage 1 tutorial: spotlight each HUD piece, then jump the timer to 80%
+  // ---------- stage 1 tutorial: spotlight each HUD piece, then the stage starts from 0%
   const Tut=(()=>{
     const el=id=>()=>$(id),par=id=>()=>$(id).parentElement;
     const STEPS=[
@@ -1123,7 +1139,7 @@ const Battle=(()=>{
       [el('hint'),'땅을 클릭하면 기사들이 그쪽으로 가서 싸우고,\n성을 클릭하면 가장 가까운 적을 알아서 공격해요.'],
       [el('speedBtn'),'게임 속도예요.\n누를 때마다 ×1 → ×1.5 → ×2 → ×1/2 순으로 바뀌어요.'],
       [el('pauseBtn'),'일시정지예요.\n계속하기, 다시하기, 그만하기를 고를 수 있어요.'],
-      [null,'이제 직접 해볼 차례예요.\n남은 시간 동안 성을 지켜내세요!'],
+      [null,'이제 직접 해볼 차례예요.\n타이머가 끝까지 찰 때까지 성을 지켜내세요!'],
     ];
     let i=0;
     function place(){
@@ -1140,7 +1156,7 @@ const Battle=(()=>{
       const left=Math.max(12,Math.min(W-bw-12,r.left+r.width/2-bw/2));
       Object.assign(box.style,{left:left+'px',top:Math.max(12,top)+'px'});
     }
-    function end(){$('tut').hidden=true;if(!B)return;B.tut=false;B.t=Math.max(B.t,B.st.dur*.8);banner('남은 시간을 버텨내세요!',1600)}
+    function end(){$('tut').hidden=true;if(!B)return;B.tut=false;banner('성을 지켜내세요!',1600)}
     function next(){if(i>=STEPS.length-1)return end();i++;place()}
     $('tutNext').onclick=next;$('tutSkip').onclick=end;
     addEventListener('resize',()=>{if(!$('tut').hidden)place()});
@@ -1151,12 +1167,14 @@ const Battle=(()=>{
 
 const Title=(()=>{
   const hasSave=()=>save.xp>0||save.crowns>0||save.unlocked>1||Object.keys(save.cleared||{}).length>0||Object.keys(save.up||{}).length>0;
-  function fresh(){const keep={speed:save.speed,cine:save.cine,tut:save.tut};save=Object.assign({xp:0,crowns:0,up:{},cleared:{},stage:1,unlocked:1,pos:0,seen:{},speed:1},keep);persist()}
+  function fresh(){const keep={speed:save.speed,cine:save.cine,tut:save.tut};save=Object.assign({xp:0,crowns:0,up:{},cleared:{},stage:1,unlocked:1,pos:0,seen:{},speed:1,castleShown:1},keep);persist()}
   let cfAction=null;
   function confirmBox(title,text,yes,fn){$('cfTitle').textContent=title;$('cfText').textContent=text;$('cfYes').textContent=yes;cfAction=fn;$('confirmOv').hidden=false;$('cfNo').focus()}
   $('cfNo').onclick=()=>{$('confirmOv').hidden=true};
   $('cfYes').onclick=()=>{$('confirmOv').hidden=true;cfAction&&cfAction()};
-  $('tNew').onclick=()=>{if(hasSave())confirmBox('새로 시작할까요?','지금까지의 진행 상황(XP, 왕관, 강화, 클리어 기록)이 모두 사라져요.','새로 시작',()=>{fresh();show('stage')});else{fresh();show('stage')}};
+  // new game: cut to black, hold a beat, then straight into stage 1 (tutorial)
+  function newGame(){fresh();$('fade').classList.add('on');setTimeout(()=>Battle.start(1),900)}
+  $('tNew').onclick=()=>{if(hasSave())confirmBox('새로 시작할까요?','지금까지의 진행 상황(XP, 왕관, 강화, 클리어 기록)이 모두 사라져요.','새로 시작',newGame);else newGame()};
   $('tCont').onclick=()=>{if(!hasSave())return toast('이어할 기록이 없어요. 새로 시작을 눌러주세요');show('stage')};
   $('toTitle').onclick=()=>show('title');
   function seg(id,opts,get,set){const el=$(id);el.innerHTML='';opts.forEach(([v,l])=>{const b=document.createElement('button');b.className='btn';b.textContent=l;b.setAttribute('aria-pressed',String(get()===v));b.onclick=()=>{set(v);persist();renderSet()};el.appendChild(b)})}
@@ -1178,5 +1196,6 @@ const Title=(()=>{
     else if(e.key==='Enter'||e.key===' '){e.preventDefault();items()[selI].click()}});
   return{enter(){$('tCont').classList.toggle('off',!hasSave());sel(hasSave()?1:0)}};
 })();
+if(save.castleShown==null){save.castleShown=stats().castleLv;persist()}
 show('title',true);
 </script>
