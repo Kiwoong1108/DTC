@@ -1,4 +1,9 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0a12">
 <title>Defend The Crown</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -209,6 +214,56 @@ button:focus-visible{outline:3px solid var(--gold-l);outline-offset:2px}
   #stageTitle{display:none}
 }
 @media (prefers-reduced-motion:reduce){#skull.boss{animation:none}}
+/* ---------- mobile ---------- */
+html,body{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;overscroll-behavior:none}
+#rotate{position:fixed;inset:0;z-index:200;background:#0b0a12;color:#e9e6f5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:24px;box-sizing:border-box}
+#rotate .phone{width:46px;height:78px;border:4px solid currentColor;border-radius:8px;position:relative;animation:turn 2.4s ease-in-out infinite}
+#rotate .phone::after{content:"";position:absolute;left:50%;bottom:5px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:currentColor}
+@keyframes turn{0%,25%{transform:rotate(0)}50%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+#rotate p{margin:0;font-size:22px;line-height:1.4}
+#rotate small{font-size:15px;opacity:.7}
+@media (orientation:portrait) and (pointer:coarse){#rotate{display:flex}}
+.touch .kbOnly{display:none!important}
+.panel{max-height:calc(100% - 24px);overflow-y:auto}
+/* short landscape screens (phones) */
+@media (max-height:500px){
+  #hudTop{top:calc(6px + env(safe-area-inset-top,0px));gap:8px;width:min(520px,calc(100vw - 230px))}
+  #timer{height:15px}
+  #skull{width:32px;height:32px;right:-24px}
+  #stats{font-size:14px;gap:10px;padding:3px 10px;flex-wrap:nowrap}
+  #stats .num{font-size:12px}
+  #stats .icon{width:15px;height:15px}
+  #pauseBtn,#speedBtn{height:42px}#pauseBtn{width:42px}#speedBtn{min-width:58px;font-size:15px}
+  .tl,.tr{top:calc(10px + env(safe-area-inset-top,0px))}
+  .tl{left:calc(12px + env(safe-area-inset-left,0px))}.tr{right:calc(12px + env(safe-area-inset-right,0px))}
+  .bl{bottom:calc(10px + env(safe-area-inset-bottom,0px));left:calc(12px + env(safe-area-inset-left,0px))}
+  .br{bottom:calc(10px + env(safe-area-inset-bottom,0px));right:calc(12px + env(safe-area-inset-right,0px))}
+  #summon{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  #sumBtn{width:70px;height:70px}
+  #hint{font-size:12px;padding:4px 8px;display:block}
+  .res{font-size:16px;padding:5px 10px}
+  #stageTitle{display:none}
+  #stagePanel{padding:8px 12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));flex-direction:row;align-items:center}
+  #stagePanel h2{font-size:20px;margin:0}
+  #stagePanel .btn{font-size:18px;padding:8px 16px}
+  #briefBox{padding:10px 14px 12px;gap:8px 12px;width:min(600px,calc(100vw - 40px))}
+  #briefTitle{font-size:19px;padding:5px 20px}
+  .side{min-height:0;padding:6px 8px 8px;gap:4px}
+  .side h3{font-size:15px}
+  .ucard{width:68px}.ucard .pic{width:60px;height:64px}.ucard .pic img{max-width:54px;max-height:58px}.ucard span{font-size:13px}
+  #briefBox .btn{font-size:19px;padding:8px 10px}
+  .panel{padding:14px 18px;gap:9px}.panel h2{font-size:24px}.panel .btn{font-size:18px;padding:8px 10px}
+  .rrow{font-size:16px;padding:2px 8px}
+  .guide{font-size:13px;padding:6px 10px}.guide img{width:16px;height:20px}
+  .fight{font-size:20px;padding:9px 16px}
+  .mapbtn{width:46px;height:46px}.mapbtn img{width:28px;height:23px}
+  #upPop{padding:12px 14px;gap:7px}#upPop h3{font-size:22px}#upPop p{font-size:16px}
+  #tutBox{padding:10px 12px;gap:8px}#tutBox p{font-size:16px}#tutBox .btn{font-size:16px;padding:6px 12px}
+  .logo{gap:8px}.menu{gap:2px}.mi{font-size:20px;padding:6px 16px 10px}
+  #cine.on .bar{height:11vh}#cineCap{font-size:32px;bottom:calc(11vh + 10px)}
+  #banner{font-size:34px}
+}
+
 </style>
 
 <div id="titleScr" class="screen" hidden>
@@ -219,7 +274,7 @@ button:focus-visible{outline:3px solid var(--gold-l);outline-offset:2px}
     <a class="mi" id="tFeed" href="https://github.com/Kiwoong1108/DTC/issues/new" target="_blank" rel="noopener"><i class="dia"></i><span>피드백</span><i class="dia"></i><span class="rule"><i class="dia"></i></span></a>
     <button class="mi" id="tSet"><i class="dia"></i><span>설정</span><i class="dia"></i><span class="rule"><i class="dia"></i></span></button>
   </nav>
-  <div id="ver">v0.0.4</div>
+  <div id="ver">v0.0.5</div>
 </div>
 <div id="confirmOv" class="modal" hidden><div class="panel box"><h2 id="cfTitle">새로 시작할까요?</h2><p id="cfText" style="margin:0;font-size:18px;line-height:1.4">지금까지의 진행 상황(XP, 왕관, 강화, 클리어 기록)이 모두 사라져요.</p><button class="btn red" id="cfYes">새로 시작</button><button class="btn alt" id="cfNo">취소</button></div></div>
 <div id="setOv" class="modal" hidden><div class="panel box" style="width:min(360px,calc(100vw - 40px))"><h2>설정</h2>
@@ -256,8 +311,8 @@ button:focus-visible{outline:3px solid var(--gold-l);outline-offset:2px}
   <div class="tl box res" id="upRes"></div>
   <button class="tr btn alt mapbtn" id="toMap" aria-label="지도"><img class="pix" id="mapIc" alt=""></button>
   <div class="bl dark guide">
-    <div><img class="pix" id="mL" alt=""><span>좌클릭 · 드래그 / 선택</span></div>
-    <div><img class="pix" id="mW" alt=""><span>휠 · 확대 / 축소</span></div>
+    <div><img class="pix" id="mL" alt=""><span data-t="터치 · 드래그 / 선택">좌클릭 · 드래그 / 선택</span></div>
+    <div><img class="pix" id="mW" alt=""><span data-t="두 손가락 · 확대 / 축소">휠 · 확대 / 축소</span></div>
   </div>
   <button class="br btn fight" id="fightBtn">전투 <small id="fightLbl">1-1</small></button>
   <div id="upPopWrap" hidden>
@@ -290,11 +345,11 @@ button:focus-visible{outline:3px solid var(--gold-l);outline-offset:2px}
   <div id="cine"><div class="bar top"></div><div class="bar bot"></div><div id="cineCap"></div></div>
   <div id="tut" hidden><div id="tutHole"></div>
     <div id="tutBox" class="box"><p id="tutText"></p><div class="row"><span class="step" id="tutStep"></span><button class="btn alt" id="tutSkip">건너뛰기</button><button class="btn" id="tutNext">다음</button></div></div></div>
-  <div class="bl dark" id="hint">땅 클릭: 기사 이동<br>성 클릭: 자동 전투</div>
+  <div class="bl dark" id="hint"><span data-t="땅 터치: 기사 이동">땅 클릭: 기사 이동</span><br><span data-t="성 터치: 자동 전투">성 클릭: 자동 전투</span></div>
   <div id="summon">
     <button id="sumBtn" aria-label="기사 소환"><canvas id="sumFace" class="pix"></canvas><canvas id="sumCd"></canvas>
       <span id="sumCost"><img class="icon pix" data-ic="coin" alt="" style="width:14px;height:14px"><b class="num" id="sumCostN">20</b></span></button>
-    <div id="sumKey">SPACE</div>
+    <div id="sumKey" class="kbOnly">SPACE</div>
   </div>
   <div id="pauseOv" class="overlay" hidden>
     <div class="panel box">
@@ -314,6 +369,7 @@ button:focus-visible{outline:3px solid var(--gold-l);outline-offset:2px}
     </div>
   </div>
 </div>
+<div id="rotate" role="alert"><div class="phone"></div><p>화면을 가로로 돌려주세요</p><small>가로 화면에서 플레이할 수 있어요</small></div>
 <div id="banner"></div>
 <div id="fade"></div>
 <div id="toast" class="box"></div>
@@ -629,6 +685,12 @@ const STAGES=[
 
 /* ================= common ui ================= */
 const $=id=>document.getElementById(id);
+const IS_TOUCH=matchMedia('(pointer:coarse)').matches||'ontouchstart' in window;
+if(IS_TOUCH){document.documentElement.classList.add('touch');
+  document.querySelectorAll('[data-t]').forEach(el=>el.textContent=el.dataset.t)}
+function goLandscape(){if(!IS_TOUCH)return;try{const d=document.documentElement,rq=d.requestFullscreen||d.webkitRequestFullscreen;
+  const lock=()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};
+  if(rq&&!document.fullscreenElement&&!document.webkitFullscreenElement){const r=rq.call(d,{navigationUI:'hide'});r&&r.then?r.then(lock).catch(()=>{}):lock()}else lock()}catch(e){}}
 let toastT=0;
 function toast(msg,ms=1300){const t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),ms)}
 function resHTML(){return `<span><img class="icon pix" src="${iconURL('star')}" alt="">XP <b class="num">${save.xp}</b></span><span><img class="icon pix" src="${iconURL('crown')}" alt=""><b class="num">${save.crowns}</b></span>`}
@@ -818,14 +880,21 @@ const Up=(()=>{
     });
   }
   function hit(sx,sy){const w=toW(sx,sy);for(const n of TREE)if(Math.abs(w.x-n.x)<36&&Math.abs(w.y-n.y)<36)return n;if(Math.hypot(w.x,w.y)<50)return 'root';return null}
-  let drag=null;
-  cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);drag={x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false}});
+  let drag=null;const pts=new Map();let pinch=null;
+  function zoomAt(sx,sy,z){const before=toW(sx,sy);cam.z=Math.max(.35,Math.min(2.2,z));const after=toW(sx,sy);cam.x+=before.x-after.x;cam.y+=before.y-after.y;draw()}
+  cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pts.size===2){const[a,b]=[...pts.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:cam.z};drag=null;return}
+    drag={x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false}});
+  cv.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pinch&&pts.size===2){const[a,b]=[...pts.values()];zoomAt((a.x+b.x)/2,(a.y+b.y)/2,pinch.z*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d)}});
+  const endPt=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=pinch&&pts.size?{done:1}:null;if(!pts.size)pinch=null};
+  cv.addEventListener('pointercancel',e=>{endPt(e);drag=null});
   cv.addEventListener('pointermove',e=>{
     if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)drag.moved=true;
       if(drag.moved){cv.classList.add('drag');cam.x=drag.cx-dx/cam.z;cam.y=drag.cy-dy/cam.z;draw()}return}
     const h=hit(e.clientX,e.clientY);const hn=h&&h!=='root'?h:null;if(hn!==hover){hover=hn;cv.classList.toggle('hover',!!h);draw()}
   });
-  cv.addEventListener('pointerup',e=>{const d=drag;drag=null;cv.classList.remove('drag');
+  cv.addEventListener('pointerup',e=>{const wasPinch=!!pinch;endPt(e);const d=drag;drag=null;cv.classList.remove('drag');if(wasPinch)return;
     if(d&&!d.moved){const h=hit(e.clientX,e.clientY);if(h==='root')toast(`성 레벨 ${stats().castleLv} · 왕관 ${save.crowns}개`);else if(h&&h.hub)toast(h.id==='castle'?'성 강화: 궁수 · 세금 · 나팔수 · 성벽 보강':'유닛 강화: 징병소 · 검 단련 · 군마 훈련 · 사슬 갑옷');else if(h)openPop(h)}});
   cv.addEventListener('wheel',e=>{e.preventDefault();const before=toW(e.clientX,e.clientY);cam.z=Math.max(.45,Math.min(2.2,cam.z*Math.exp(-e.deltaY*.0015)));const after=toW(e.clientX,e.clientY);cam.x+=before.x-after.x;cam.y+=before.y-after.y;draw()},{passive:false});
   function openPop(n){popNode=n;fillPop();$('upPopWrap').hidden=false;$('ppBuy').focus()}
@@ -848,7 +917,7 @@ const Up=(()=>{
   $('fightBtn').onclick=()=>Battle.start(Math.min(save.stage||1,save.unlocked));
   addEventListener('keydown',e=>{if(current!=='upgrade')return;if(e.key==='Escape')$('upPopWrap').hidden=true});
   addEventListener('resize',()=>{if(current==='upgrade')resize()});
-  return{enter(){$('upRes').innerHTML=resHTML();$('fightLbl').textContent='1-'+Math.min(save.stage||1,save.unlocked);$('upPopWrap').hidden=true;cam.z=Math.min(1,Math.min(innerWidth,innerHeight)/1000+.35);resize();
+  return{enter(){$('upRes').innerHTML=resHTML();$('fightLbl').textContent='1-'+Math.min(save.stage||1,save.unlocked);$('upPopWrap').hidden=true;cam.z=Math.min(1,Math.min(innerWidth,innerHeight)/1000+.35,Math.max(.5,innerHeight/780));cam.y=-20;cam.x=0;resize();
     if(document.fonts)document.fonts.ready.then(draw)}};
 })();
 
@@ -864,7 +933,7 @@ const Battle=(()=>{
   let W=0,H=0,dpr=1,vs=1,ox=0,oy=0;
   let B=null,raf=0,last=0;
   function resize(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;
-    vs=Math.min(W/1120,H/920);ox=W/2-707*vs;oy=H/2-560*vs+(H<700?10:20)}
+    vs=H<500?Math.min(W/1080,H/820):Math.min(W/1120,H/920);ox=W/2-707*vs;oy=H/2-560*vs+(H<700?10:20)}
   function start(stageNo){
     if(stageNo>save.unlocked)return;
     const st=STAGES[stageNo-1],S=stats();
@@ -907,6 +976,7 @@ const Battle=(()=>{
     if(e.code==='Space'){e.preventDefault();summon()}
     if(e.key==='Escape'&&!B.over)setPause(!B.paused)});
   function setPause(p){B.paused=p;$('pauseOv').hidden=!p;if(p)$('pResume').focus()}
+  matchMedia('(orientation:portrait) and (pointer:coarse)').addEventListener('change',m=>{if(m.matches&&current==='battle'&&B&&!B.over&&!B.tut)setPause(true)});
   $('pauseBtn').onclick=()=>{if(B&&!B.over&&!B.tut)setPause(true)};
   $('pResume').onclick=()=>setPause(false);
   $('pRestart').onclick=()=>start(B.no);
@@ -1135,8 +1205,8 @@ const Battle=(()=>{
       [par('hHp'),'성의 체력이에요.\n0이 되면 패배해요.'],
       [par('hPop'),'인구수예요.\n지금 있는 기사 수 / 최대로 둘 수 있는 기사 수예요.'],
       [par('hKill'),'처치 수예요.\n전투가 끝나면 처치한 만큼 XP를 받아 강화에 써요.'],
-      [el('sumBtn'),'기사 소환 버튼이에요.\n오른쪽 위 숫자만큼 골드를 내고 기사를 불러요. 소환하면 잠시 쿨타임이 돌아요.\n스페이스바로도 소환할 수 있어요.'],
-      [el('hint'),'땅을 클릭하면 기사들이 그쪽으로 가서 싸우고,\n성을 클릭하면 가장 가까운 적을 알아서 공격해요.'],
+      [el('sumBtn'),'기사 소환 버튼이에요.\n오른쪽 위 숫자만큼 골드를 내고 기사를 불러요. 소환하면 잠시 쿨타임이 돌아요.'+(IS_TOUCH?'':'\n스페이스바로도 소환할 수 있어요.')],
+      [el('hint'),(IS_TOUCH?'땅을 터치하면 기사들이 그쪽으로 가서 싸우고,\n성을 터치하면 가장 가까운 적을 알아서 공격해요.':'땅을 클릭하면 기사들이 그쪽으로 가서 싸우고,\n성을 클릭하면 가장 가까운 적을 알아서 공격해요.')],
       [el('speedBtn'),'게임 속도예요.\n누를 때마다 ×1 → ×1.5 → ×2 → ×1/2 순으로 바뀌어요.'],
       [el('pauseBtn'),'일시정지예요.\n계속하기, 다시하기, 그만하기를 고를 수 있어요.'],
       [null,'이제 직접 해볼 차례예요.\n타이머가 끝까지 찰 때까지 성을 지켜내세요!'],
@@ -1174,6 +1244,7 @@ const Title=(()=>{
   $('cfYes').onclick=()=>{$('confirmOv').hidden=true;cfAction&&cfAction()};
   // new game: cut to black, hold a beat, then straight into stage 1 (tutorial)
   function newGame(){fresh();$('fade').classList.add('on');setTimeout(()=>Battle.start(1),900)}
+  ['tNew','tCont'].forEach(id=>$(id).addEventListener('click',goLandscape));
   $('tNew').onclick=()=>{if(hasSave())confirmBox('새로 시작할까요?','지금까지의 진행 상황(XP, 왕관, 강화, 클리어 기록)이 모두 사라져요.','새로 시작',newGame);else newGame()};
   $('tCont').onclick=()=>{if(!hasSave())return toast('이어할 기록이 없어요. 새로 시작을 눌러주세요');show('stage')};
   $('toTitle').onclick=()=>show('title');
